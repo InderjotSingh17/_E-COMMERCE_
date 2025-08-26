@@ -49,9 +49,24 @@ Home
           <div class="card-body">
             <h5 class="card-title mt-2" id="namepr{{i.id}}">{{i.product_name}}</h5>
             <p class="card-text">{{i.desc|slice:"0:53"}}...</p>
-            <h6 class="card-title mb-3">
+            <h6 class="card-title mb-1">
               Price:<span id="pricepr{{i.id}}">{{i.price}}</span>
             </h6>
+            <div class="mb-2" id="rating-summary-{{i.id}}">
+              <span class="text-warning">★</span>
+              <span class="fw-bold" id="avg-{{i.id}}">{{ i.average_rating }}</span>
+              <small class="text-muted">({{ i.rating_count }} ratings)</small>
+            </div>
+            <div class="mb-2" id="rating-form-{{i.id}}">
+              <div class="btn-group btn-group-sm" role="group" aria-label="Rate">
+                <button type="button" class="btn btn-outline-warning rate-btn" data-score="1" data-id="{{i.id}}">★</button>
+                <button type="button" class="btn btn-outline-warning rate-btn" data-score="2" data-id="{{i.id}}">★★</button>
+                <button type="button" class="btn btn-outline-warning rate-btn" data-score="3" data-id="{{i.id}}">★★★</button>
+                <button type="button" class="btn btn-outline-warning rate-btn" data-score="4" data-id="{{i.id}}">★★★★</button>
+                <button type="button" class="btn btn-outline-warning rate-btn" data-score="5" data-id="{{i.id}}">★★★★★</button>
+              </div>
+              <small class="d-block text-muted">Click to rate</small>
+            </div>
             <span id="divpr{{i.id}}" class="divpr">
               <button id="pr{{i.id}}" class="btn btn-danger cart btn-sm mt-0">
                 AddToCart <i class="fa-solid fa-cart-shopping"></i>
@@ -78,6 +93,38 @@ Home
   
  
 <script>
+  // Rating AJAX
+  $(document).on('click', '.rate-btn', function() {
+    var productId = $(this).data('id');
+    var score = $(this).data('score');
+    $.ajax({
+      url: '/rate/' + productId + '/',
+      method: 'POST',
+      data: { score: score },
+      headers: { 'X-CSRFToken': getCookie('csrftoken') },
+      success: function(resp){
+        if(resp.ok){
+          $('#avg-' + productId).text(resp.average);
+          $('#rating-summary-' + productId + ' small').text('(' + resp.count + ' ratings)');
+        }
+      }
+    });
+  });
+
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+      const cookies = document.cookie.split(';');
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
   
   //find pout the card from local storage
 
@@ -110,7 +157,7 @@ Home
       localStorage.setItem('cart', JSON.stringify(cart));
       document.getElementById('cart').innerHTML = Object.keys(cart).length;
       console.log( Object.keys(cart).length)
-      document.getElementById("popcart").click();
+      document.getElementById('popcart').click();
   });
   // add pop over to cart
 
@@ -134,7 +181,7 @@ Home
       popStr = popStr + "</div> <a href='/checkout'><button class='btn btn-success' id='clearCart'>Checkout</button></a>  <button class='btn btn-dark' onclick='clearCart()' id='clearCart'>ClearCart</button>"
       document.getElementById('popcart').setAttribute('data-content', popStr);
       $('#popcart').popover('show');
-      document.getElementById("popcart").click();
+      document.getElementById('popcart').click();
   }
 
   function clearCart() {
@@ -146,8 +193,8 @@ Home
       cart = {};
       updateCart(cart);
       
-     let clear= document.getElementById("popcart").click();
-     document.getElementById("popcart").click();
+     let clear= document.getElementById('popcart').click();
+     document.getElementById('popcart').click();
     
   }
 
@@ -161,7 +208,7 @@ Home
       document.getElementById('cart').innerHTML = sum;
       console.log(cart);
       updatePopover(cart);
-      document.getElementById("popcart").click();
+      document.getElementById('popcart').click();
   }
 
   //if plus or minus button is clicked change the cart as well as the display value
@@ -188,7 +235,6 @@ Home
 
   })
 </script>
-
 
 
 

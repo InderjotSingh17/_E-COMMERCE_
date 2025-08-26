@@ -8,6 +8,9 @@ MERCHANT_KEY=keys.MK
 import json
 from django.views.decorators.csrf import  csrf_exempt
 from PayTm import Checksum
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+from ecommerceapp.models import Rating
 
 # Create your views here.
 def index(request):
@@ -157,3 +160,42 @@ def profile(request):
         "delivered_count": delivered_count
     }
     return render(request, "profile.html", context)
+
+
+@require_POST
+@csrf_exempt
+def rate_product(request, product_id):
+    try:
+        product = Product.objects.get(id=product_id)
+    except Product.DoesNotExist:
+        return JsonResponse({"ok": False, "error": "Product not found"}, status=404)
+
+    try:
+        score = int(request.POST.get("score", ""))
+    except ValueError:
+        return JsonResponse({"ok": False, "error": "Invalid score"}, status=400)
+
+    if score < 1 or score > 5:
+        return JsonResponse({"ok": False, "error": "Score must be 1-5"}, status=400)
+
+    if request.user.is_authenticated:
+        user_identifier = request.user.username
+    else:
+        # fallback: use session key or IP if not logged in
+        user_identifier = request.session.session_key or request.META.get("REMOTE_ADDR", "anon")
+        if not request.session.session_key:
+            request.session.save()
+
+    rating, _created = Rating.objects.update_or_create(
+        product=product,
+        user_identifier=user_identifier,
+        defaults={"score": score}
+    )
+
+    return JsonResponse({
+        "ok": True,
+        "average": product.average_rating(),
+        "count": product.rating_count(),
+        "score": rating.score,
+        "product_id": product.id
+    })

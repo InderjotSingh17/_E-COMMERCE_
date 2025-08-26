@@ -24,6 +24,14 @@ class Product(models.Model):
     def __str__(self):
         return self.product_name
 
+    def average_rating(self):
+        ratings = self.rating_set.all().values_list('score', flat=True)
+        if not ratings:
+            return 0
+        return round(sum(ratings) / len(ratings), 1)
+
+    def rating_count(self):
+        return self.rating_set.count()
 
 
 class Orders(models.Model):
@@ -54,3 +62,16 @@ class OrderUpdate(models.Model):
 
     def __str__(self):
         return self.update_desc[0:7] + "..."
+
+class Rating(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    user_identifier = models.CharField(max_length=150)
+    score = models.PositiveSmallIntegerField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = ('product', 'user_identifier')
+
+    def __str__(self):
+        return f"{self.product.product_name} - {self.score}"
