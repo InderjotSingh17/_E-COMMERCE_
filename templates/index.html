@@ -91,6 +91,7 @@ Home
   
  
 <script>
+window.addEventListener('load', function() {
   // Rating AJAX
   $(document).on('click', '.rate-btn', function() {
     var productId = $(this).data('id');
@@ -127,7 +128,7 @@ Home
   // Bootstrap 5 popover init
   var popcartEl = document.getElementById('popcart');
   var popover = null;
-  if (popcartEl) {
+  if (popcartEl && window.bootstrap) {
     popover = new bootstrap.Popover(popcartEl, {html: true, trigger: 'manual', container: 'body', placement: 'bottom', content: ''});
   }
   
@@ -231,6 +232,7 @@ Home
       
 
   })
+});
 </script>
 
 
