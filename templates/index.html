@@ -88,8 +88,6 @@ Home
 <!-- End Portfolio Section -->
 
 <script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
   
  
 <script>
@@ -126,6 +124,13 @@ Home
     return cookieValue;
   }
   
+  // Bootstrap 5 popover init
+  var popcartEl = document.getElementById('popcart');
+  var popover = null;
+  if (popcartEl) {
+    popover = new bootstrap.Popover(popcartEl, {html: true, trigger: 'manual', container: 'body', placement: 'bottom', content: ''});
+  }
+  
   //find pout the card from local storage
 
   if (localStorage.getItem('cart') == null) {
@@ -157,16 +162,11 @@ Home
       localStorage.setItem('cart', JSON.stringify(cart));
       document.getElementById('cart').innerHTML = Object.keys(cart).length;
       console.log( Object.keys(cart).length)
-      document.getElementById('popcart').click();
+      if (popover) { popover.show(); }
   });
   // add pop over to cart
 
-  $('#popcart').popover();
-
-  updatePopover(cart);
   function updatePopover(cart) {
-
-      
       console.log('we are  inside update popover');
       
       var popStr = "";
@@ -179,9 +179,10 @@ Home
       }
 
       popStr = popStr + "</div> <a href='/checkout'><button class='btn btn-success' id='clearCart'>Checkout</button></a>  <button class='btn btn-dark' onclick='clearCart()' id='clearCart'>ClearCart</button>"
-      document.getElementById('popcart').setAttribute('data-content', popStr);
-      $('#popcart').popover('show');
-      document.getElementById('popcart').click();
+      if (popcartEl) {
+        popcartEl.setAttribute('data-bs-content', popStr);
+        if (popover) { popover.update(); popover.show(); }
+      }
   }
 
   function clearCart() {
@@ -192,10 +193,7 @@ Home
       localStorage.clear();
       cart = {};
       updateCart(cart);
-      
-     let clear= document.getElementById('popcart').click();
-     document.getElementById('popcart').click();
-    
+      if (popover) { popover.show(); }
   }
 
   function updateCart(cart) {
@@ -208,7 +206,6 @@ Home
       document.getElementById('cart').innerHTML = sum;
       console.log(cart);
       updatePopover(cart);
-      document.getElementById('popcart').click();
   }
 
   //if plus or minus button is clicked change the cart as well as the display value
