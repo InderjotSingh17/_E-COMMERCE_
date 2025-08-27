@@ -91,6 +91,7 @@ Home
   color: #ffc107;
 }
 
+/* Fix: Left to right star rating */
 .star-rating[data-rating="1"] .star:nth-child(1),
 .star-rating[data-rating="2"] .star:nth-child(1),
 .star-rating[data-rating="2"] .star:nth-child(2),
@@ -107,6 +108,11 @@ Home
 .star-rating[data-rating="5"] .star:nth-child(4),
 .star-rating[data-rating="5"] .star:nth-child(5) {
   color: #ffc107;
+}
+
+/* Fix hover effect for left-to-right */
+.star-rating .star:hover ~ .star {
+  color: #ddd !important;
 }
 </style>
 
@@ -167,8 +173,8 @@ window.addEventListener('load', function() {
       updateCart(cart);
   }
 
-  // add or increment code
-  $('.divpr').on('click', 'button.cart', function() {
+  // add or increment code - Fixed selector
+  $(document).on('click', '.divpr button.cart', function() {
       var idstr = this.id.toString();
       console.log(idstr)
 
@@ -231,7 +237,7 @@ window.addEventListener('load', function() {
   }
 
   //if plus or minus button is clicked change the cart as well as the display value
-  $('.divpr').on("click", "button.minus", function() {
+  $(document).on("click", "button.minus", function() {
       a = this.id.slice(7, );
       cart['pr' + a][0] = cart['pr' + a][0] - 1;
       cart['pr' + a][0] = Math.max(0, cart['pr' + a][0]);
@@ -239,7 +245,7 @@ window.addEventListener('load', function() {
       updateCart(cart);
   })
 
-  $('.divpr').on("click", "button.plus", function() {
+  $(document).on("click", "button.plus", function() {
       a = this.id.slice(6, );
       cart['pr' + a][0] = cart['pr' + a][0] + 1;
       document.getElementById('valpr' + a).innerHTML = cart['pr' + a][0];
