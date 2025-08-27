@@ -2,11 +2,11 @@
 {% block title %}
 Home
 {% endblock title %} 
+
 {% block content %}
-
 <h1>Welcome to Dhamaka Sale</h1>
-
 {% endblock content %} 
+
 {% block body %} 
 {% load static %}
 
@@ -14,18 +14,9 @@ Home
 <section id="portfolio" class="portfolio">
   <div class="container">
     {% for message in messages %}
-
-    <div
-      class="alert alert-{{message.tags}} alert-dismissible fade show"
-      role="alert"
-    >
+    <div class="alert alert-{{message.tags}} alert-dismissible fade show" role="alert">
       <strong>{{message}}</strong>
-      <button
-        type="button"
-        class="btn-close"
-        data-bs-dismiss="alert"
-        aria-label="Close"
-      ></button>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
     {% endfor %}
 
@@ -35,14 +26,12 @@ Home
     </div>
 
     {% for product, range, nSlides in allProds %}
-
     <h3 class="my-3 text-center text-success bg-light">
       {{product.0.category}} Flashsale
     </h3>
 
     <div class="container">
       <div class="row">
-
         {% for i in product %}
         <div class="col-md-3 mt-3">
           <img src="/media/{{i.image}}" class="card-img-top" alt="not found" height="200px" width="150px" />
@@ -72,13 +61,11 @@ Home
                 AddToCart <i class="fa-solid fa-cart-shopping"></i>
               </button>
             </span>
-
             <a href="/media/{{i.image}}">
-              <button class="btn btn-dark btn-sm cart"><i class="fa-solid fa-eye"></i></button></a
-            >
+              <button class="btn btn-dark btn-sm cart"><i class="fa-solid fa-eye"></i></button>
+            </a>
           </div>
         </div>
-
         {% endfor %}
       </div>
     </div>
@@ -89,7 +76,6 @@ Home
 
 <script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous"></script>
   
- 
 <script>
 window.addEventListener('load', function() {
   // Rating AJAX
