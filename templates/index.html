@@ -47,12 +47,12 @@ Home
               <small class="text-muted">({{ i.rating_count }} ratings)</small>
             </div>
             <div class="mb-2" id="rating-form-{{i.id}}">
-              <div class="btn-group btn-group-sm" role="group" aria-label="Rate">
-                <button type="button" class="btn btn-outline-warning rate-btn" data-score="1" data-id="{{i.id}}">★</button>
-                <button type="button" class="btn btn-outline-warning rate-btn" data-score="2" data-id="{{i.id}}">★★</button>
-                <button type="button" class="btn btn-outline-warning rate-btn" data-score="3" data-id="{{i.id}}">★★★</button>
-                <button type="button" class="btn btn-outline-warning rate-btn" data-score="4" data-id="{{i.id}}">★★★★</button>
-                <button type="button" class="btn btn-outline-warning rate-btn" data-score="5" data-id="{{i.id}}">★★★★★</button>
+              <div class="star-rating" data-product-id="{{i.id}}">
+                <span class="star" data-rating="1">★</span>
+                <span class="star" data-rating="2">★</span>
+                <span class="star" data-rating="3">★</span>
+                <span class="star" data-rating="4">★</span>
+                <span class="star" data-rating="5">★</span>
               </div>
               <small class="d-block text-muted">Click to rate</small>
             </div>
@@ -74,18 +74,59 @@ Home
 </section>
 <!-- End Portfolio Section -->
 
+<style>
+.star-rating {
+  display: inline-block;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.star-rating .star {
+  color: #ddd;
+  transition: color 0.2s;
+}
+
+.star-rating .star:hover,
+.star-rating .star:hover ~ .star {
+  color: #ffc107;
+}
+
+.star-rating[data-rating="1"] .star:nth-child(1),
+.star-rating[data-rating="2"] .star:nth-child(1),
+.star-rating[data-rating="2"] .star:nth-child(2),
+.star-rating[data-rating="3"] .star:nth-child(1),
+.star-rating[data-rating="3"] .star:nth-child(2),
+.star-rating[data-rating="3"] .star:nth-child(3),
+.star-rating[data-rating="4"] .star:nth-child(1),
+.star-rating[data-rating="4"] .star:nth-child(2),
+.star-rating[data-rating="4"] .star:nth-child(3),
+.star-rating[data-rating="4"] .star:nth-child(4),
+.star-rating[data-rating="5"] .star:nth-child(1),
+.star-rating[data-rating="5"] .star:nth-child(2),
+.star-rating[data-rating="5"] .star:nth-child(3),
+.star-rating[data-rating="5"] .star:nth-child(4),
+.star-rating[data-rating="5"] .star:nth-child(5) {
+  color: #ffc107;
+}
+</style>
+
 <script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous"></script>
   
 <script>
 window.addEventListener('load', function() {
-  // Rating AJAX
-  $(document).on('click', '.rate-btn', function() {
-    var productId = $(this).data('id');
-    var score = $(this).data('score');
+  // Interactive Star Rating
+  $(document).on('click', '.star', function() {
+    var rating = $(this).data('rating');
+    var productId = $(this).closest('.star-rating').data('product-id');
+    
+    // Update visual rating
+    $(this).closest('.star-rating').attr('data-rating', rating);
+    
+    // Send rating to server
     $.ajax({
       url: '/rate/' + productId + '/',
       method: 'POST',
-      data: { score: score },
+      data: { score: rating },
       headers: { 'X-CSRFToken': getCookie('csrftoken') },
       success: function(resp){
         if(resp.ok){
